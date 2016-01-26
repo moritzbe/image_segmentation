@@ -37,21 +37,20 @@ threshold = 0.1
 ims_bin[ims_bin > threshold] = 1
 ims_bin[ims_bin < threshold] = 0
 
-# # (Tip: a threshold of 0.1 seemed to be good, but pick your own)
-# # Now with the binary image use the opning and closing to 
-# # bring the star to compacter format. Take care that no star connects to another
+# (Tip: a threshold of 0.1 seemed to be good, but pick your own)
+# Now with the binary image use the opning and closing to 
+# bring the star to compacter format. Take care that no star connects to another
 s1 = np.array([[1,1,1],[1,1,1],[1,1,1]])
 ims2 = ndi.binary_closing(ims_bin, structure=s1)
 
-# # repeat if necessary
-# # remove isolated pixels around the moon with closing by a 2 pixel structure
+# repeat if necessary
+# remove isolated pixels around the moon with closing by a 2 pixel structure
 s2 = np.array([[0,0,0,0],[0,1,1,0],[0,1,1,0],[0,0,0,0]])
 ims3 = ndi.binary_opening(ims2,structure=s2)
 
-# # play with all the morphological options in ndimage package to increase the quality
-# # if still needed
+# play with all the morphological options in ndimage package to increase the quality
+# if still needed
 
-# ims? = ndi.binary_??????(?????) # optional
  
 # plotting the sum of all your binary images can help identify if you loose stars. 
 # in principal every star is present in every binary image, so real stars have always 
@@ -60,29 +59,31 @@ ims3 = ndi.binary_opening(ims2,structure=s2)
 plt.figure(1)
 plt.imshow(ims2 + ims3)
 
-# # Once you're done, label your image with ndi.label.
+# Once you're done, label your image with ndi.label.
 im_lbld, num_stars = ndi.label(ims3)
 plt.figure(2)
 plt.imshow(im_lbld)
 
-# # Use ndi.find_objects in the labeled to return a list of slices through the image for each star
+# Use ndi.find_objects in the labeled to return a list of slices through the image for each star
 slc_lst = ndi.find_objects(im_lbld)
 
-# # you can have a look now at the individual stars. just apply the slice to your labelled array
+# you can have a look now at the individual stars. just apply the slice to your labelled array
 starnum = 10
 plt.figure(3)
 plt.imshow(im_lbld[slc_lst[starnum]])
 
-# # REMAINING task. Sum up each individual star to get a list of star brightnesses
-# # make a detailed histogram (>100 bins). Take care to exclude the moon! 
-# # This can be done by sorting the brightness array and remove the last element.
+# REMAINING task. Sum up each individual star to get a list of star brightnesses
+# make a detailed histogram (>100 bins). Take care to exclude the moon! 
+# This can be done by sorting the brightness array and remove the last element.
 
-# # Remember: im_lbld[slc_lst[<number>]] selects one star. Create a list of star images with [0, 1].
-# # Afterwards, sum their intensity up, and np.sort the sums.
+# Remember: im_lbld[slc_lst[<number>]] selects one star. Create a list of star images with [0, 1].
+# Afterwards, sum their intensity up, and np.sort the sums.
 
-# ????
-# ????
-# plt.figure(4)
-# plt.hist(???, bins=100)
+
+brightness_array = im_lbld[slc_lst[:]]
+sorted_array = np.sort(brightness_array)
+array_no_moon = sorted_array.pop()
+plt.figure(4)
+plt.hist(array_no_moon, bins=100)
 
 plt.show()
